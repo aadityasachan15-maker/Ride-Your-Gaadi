@@ -1,0 +1,8 @@
+{
+  "name": "RideNow - yourgaadi.com",
+  "description": "Fast and reliable next-gen cab booking platform with live tracking, multiple fleet tiers, instant OTP login, automated payments, and smart transportation management.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
