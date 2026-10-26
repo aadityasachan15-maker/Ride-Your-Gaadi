@@ -36,29 +36,35 @@ export const LiveTrackingView: React.FC<LiveTrackingViewProps> = ({
   const [feedback, setFeedback] = useState(ride.feedback || '');
   const [refreshmentSuccess, setRefreshmentSuccess] = useState('');
 
+  // Keep progress and rating in sync if ride changes
+  useEffect(() => {
+    setProgress(ride.currentProgressPercent || 0);
+    setUserRating(ride.rating || null);
+    setFeedback(ride.feedback || '');
+  }, [ride.id, ride.currentProgressPercent, ride.rating, ride.feedback]);
+
   // Live simulation tick
   useEffect(() => {
-    if (progress >= 100) return;
+    if (progress >= 100 || ride.status === 'completed') return;
 
     const interval = setInterval(() => {
-      setProgress((prev) => {
-        const next = Math.min(100, prev + 2);
-        // Vary speed slightly for realistic HUD feel
-        setSpeed(48 + Math.floor(Math.sin(next) * 16));
-
-        if (next >= 100 && ride.status !== 'completed') {
-          onUpdateRide({
-            ...ride,
-            currentProgressPercent: 100,
-            status: 'completed',
-            speedKmh: 0,
-          });
-        }
-        return next;
-      });
+      setProgress((prev) => Math.min(100, prev + 2));
+      setSpeed(48 + Math.floor(Math.random() * 16));
     }, 2500);
 
     return () => clearInterval(interval);
+  }, [progress, ride.status]);
+
+  // Sync ride completion cleanly in an effect, outside render/updater
+  useEffect(() => {
+    if (progress >= 100 && ride.status !== 'completed') {
+      onUpdateRide({
+        ...ride,
+        currentProgressPercent: 100,
+        status: 'completed',
+        speedKmh: 0,
+      });
+    }
   }, [progress, ride, onUpdateRide]);
 
   const handleInstantArrival = () => {

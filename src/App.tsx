@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Navbar } from './components/Navbar.tsx';
 import { HeroBooking } from './components/HeroBooking.tsx';
 import { CabPicker } from './components/CabPicker.tsx';
@@ -116,7 +116,7 @@ export default function App() {
     }).catch(() => {});
   };
 
-  const handleUpdateRide = (updated: RideBooking) => {
+  const handleUpdateRide = useCallback((updated: RideBooking) => {
     setActiveRide(updated);
     setRides((prev) => prev.map((r) => (r.id === updated.id ? updated : r)));
 
@@ -125,7 +125,7 @@ export default function App() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(updated),
     }).catch(() => {});
-  };
+  }, []);
 
   const handleUpdateRideStatus = (rideId: string, newStatus: RideStatus) => {
     setRides((prev) =>
